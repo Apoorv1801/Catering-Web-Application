@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Royal Caterers</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Royal Caterers</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="menu.html">Menu</a>
+            <a href="booking.html">Book Event</a>
+            <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+        </nav>
+    </header>
+
+    <section class="cart">
+
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <h3 class="total-box">Total: ₹<span id="total-price">0</span></h3>
+
+        <form id="orderForm" class="booking-form" onsubmit="return false">
+            <h3>Delivery Details</h3>
+
+            <label>Full Name</label>
+            <input type="text" id="orderName" placeholder="Enter your name" required>
+
+            <label>Phone</label>
+            <input type="tel" id="orderPhone" placeholder="Enter your phone number" required>
+
+            <label>Delivery Address</label>
+            <textarea id="orderAddress" placeholder="Enter your delivery address" required></textarea>
+
+            <button type="submit" id="placeOrderBtn">Place Order</button>
+        </form>
+
+    </section>
+
+    <script>
+        if (!sessionStorage.getItem("loggedInCustomer")) {
+            alert("Please login to book an event.");
+            window.location.href = "login.html";
+        }
+    </script>
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>

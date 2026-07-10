@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Caterers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">Royal Caterers</div>
+        <nav>
+            <a href="index.html">Home</a>
+
+            <div class="nav-dropdown">
+                <a href="menu.html?event=Special Occasion" class="nav-dropdown-trigger">Menu ▾</a>
+                <div class="nav-dropdown-menu">
+                    <a href="menu.html?event=Special Occasion">Special Occasion (All)</a>
+                    <a href="menu.html?event=Wedding">Wedding</a>
+                    <a href="menu.html?event=Anniversary">Anniversary</a>
+                    <a href="menu.html?event=Birthday">Birthday Party</a>
+                    <a href="menu.html?event=Retirement">Retirement Party</a>
+                    <a href="menu.html?event=Engagement">Engagement</a>
+                </div>
+            </div>
+
+            <a href="booking.html">Book Event</a>
+            <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+            <span id="nav-user"></span>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Exquisite Catering For Every Occasion</h2>
+            <p>From intimate gatherings to grand celebrations, we create unforgettable culinary experiences</p>
+            <a href="booking.html"><button class="btn big-btn">Book Event</button></a>
+            <a href="menu.html"><button class="explore-btn"><span class="icon">🍴</span> Explore Menu</button></a>
+        </div>
+    </section>
+
+    <!-- ELEVATING ABOUT SECTION -->
+    <section class="elevating-section">
+        <div class="elevating-images">
+            <div class="img-cards">
+                <div class="img-card">
+                    <img src="images/a1.jpg" onerror="this.style.display='none';this.parentElement.innerHTML='🍢'">
+                </div>
+                <div class="img-card">
+                    <img src="images/a2.jpg" onerror="this.style.display='none';this.parentElement.innerHTML='🍛'">
+                </div>
+            </div>
+        </div>
+
+        <div class="elevating-content">
+            <p class="section-label">About Us</p>
+            <h2 class="elevating-title">
+                Elevating Your Events<br>with <em>Exceptional</em> Food.
+            </h2>
+            <p class="elevating-desc">
+                Royal Caterers is the place where food is celebrated. We love to create
+                unforgettable culinary experiences that bring people together for over 25 years.
+            </p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">🍽️</span>
+                    <span class="stat-number">25+</span>
+                    <span class="stat-label">Years of Experience</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💍</span>
+                    <span class="stat-number">2000+</span>
+                    <span class="stat-label">Successful Events</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🤝</span>
+                    <span class="stat-number">98%</span>
+                    <span class="stat-label">Repeated Customers</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OUR SERVICES -->
+    <section class="services">
+        <p>WHAT WE DO</p>
+        <h2>Premium Catering Services</h2>
+        <div class="service-container">
+            <div class="card">
+                <img src="images/wedding.jpg">
+                <h3>Wedding Catering</h3>
+                <p>Luxury catering for unforgettable weddings.</p>
+            </div>
+            <div class="card">
+                <img src="images/birthday.jpg">
+                <h3>Birthday Parties</h3>
+                <p>Fun and tasty food for birthday celebrations.</p>
+            </div>
+            <div class="card">
+                <img src="images/corporate.jpg">
+                <h3>Corporate Events</h3>
+                <p>Professional catering for business events.</p>
+            </div>
+            <div class="card">
+                <img src="images/anniversary.jpg">
+                <h3>Special Occasions</h3>
+                <p>Anniversaries, retirements & memorable celebrations.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY CHOOSE US -->
+    <section class="about">
+        <div class="about-content">
+            <p>WHY CHOOSE US</p>
+            <h2>Leave Your Guests Speechless With Our Fabulous Food!</h2>
+        </div>
+        <div class="about-cards">
+            <div class="acard">
+                <img src="images/about1.JPG">
+                <h3>Authentic Taste</h3>
+                <p>Enjoy our traditional recipes, inspired by rich culinary heritage</p>
+            </div>
+            <div class="acard">
+                <img src="images/about2.JPG">
+                <h3>Service Excellence</h3>
+                <p>Outstanding service and unforgettable experiences.</p>
+            </div>
+            <div class="acard">
+                <img src="images/about3.JPG">
+                <h3>Best Quality</h3>
+                <p>Top quality standards, excellence in every bite.</p>
+            </div>
+            <div class="acard">
+                <img src="images/about4.JPG">
+                <h3>Heritage</h3>
+                <p>Royal Caterers blends food and heart, rooted in family traditions.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MARQUEE STRIP -->
+    <div class="marquee-section">
+        <div class="marquee-track">
+            <div class="marquee-item"><span class="marquee-dot"></span>Birthday</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Corporate</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Retirement</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Wedding</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Anniversary</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Engagement</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>50th Anniversary</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>80th Birthday</div>
+            <!-- Duplicate for seamless loop -->
+            <div class="marquee-item"><span class="marquee-dot"></span>Birthday</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Corporate</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Retirement</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Wedding</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Anniversary</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>Engagement</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>50th Anniversary</div>
+            <div class="marquee-item"><span class="marquee-dot"></span>80th Birthday</div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="royal-footer">
+        <div class="footer-grid">
+
+            <div class="footer-brand">
+                <div class="brand-logo">
+                    <div class="brand-logo-icon">RC</div>
+                    <div class="brand-logo-text">
+                        Royal Caterers
+                    </div>
+                </div>
+                <p>Let Royal Caterers transform your special occasion into a masterpiece with our professional touch.
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link">f</a>
+                    <a href="#" class="social-link">in</a>
+                    <a href="#" class="social-link">▶</a>
+                    <a href="#" class="social-link">✉</a>
+                </div>
+            </div>
+
+            <div class="footer-services">
+                <h3 class="footer-col-title">Our Services</h3>
+                <div class="services-cols">
+                    <a href="#">Wedding Event</a>
+                    <a href="#">Birthday Party</a>
+                    <a href="#">Engagement</a>
+                    <a href="#">Corporate Events</a>
+                    <a href="#">Retirement Function</a>
+                    <a href="#">Special Occasion</a>
+                </div>
+            </div>
+
+            <div class="footer-contact">
+                <h3 class="footer-col-title">Contact Now</h3>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <p>123 Royal Street,<br>Vadodara, Gujarat – 390023.</p>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <p>+91 98765 43210<br>+91 91234 56789</p>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <p>contact@royalcaterers.com</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 <a href="#">Royal Caterers</a> — All rights reserved</p>
+            <button class="go-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+                Go to Top
+                <span class="go-top-arrow">↑</span>
+            </button>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>
