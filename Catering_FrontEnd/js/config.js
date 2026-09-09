@@ -4,4 +4,4 @@
 const API_BASE_URL =
   window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost"
     ? "http://localhost:8080"
-    : "https://royal-caterers-backend.onrender.com"; // <-- replace after backend deploy
+    : "https://royalcaterers.onrender.com";
