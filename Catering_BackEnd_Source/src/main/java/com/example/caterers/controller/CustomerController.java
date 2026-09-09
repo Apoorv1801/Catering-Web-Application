@@ -23,7 +23,7 @@ public class CustomerController {
 
     // ─────────────────────────────────────────────────────────────────────
     // 1. REGISTER — saves name, phone, email, password; marks verified=true
-    //    No OTP needed on signup. Account is ready immediately.
+    // No OTP needed on signup. Account is ready immediately.
     // ─────────────────────────────────────────────────────────────────────
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Customer customer) {
@@ -42,7 +42,7 @@ public class CustomerController {
             return ResponseEntity.badRequest().body("Email already registered. Please login.");
 
         customer.setEmail(customer.getEmail().toLowerCase());
-        customer.setVerified(true);   // No OTP required — password is enough
+        customer.setVerified(true); // No OTP required — password is enough
         customerRepository.save(customer);
 
         return ResponseEntity.ok("Account created successfully.");
@@ -53,7 +53,7 @@ public class CustomerController {
     // ─────────────────────────────────────────────────────────────────────
     @PostMapping("/login-password")
     public ResponseEntity<?> loginWithPassword(@RequestBody Map<String, String> body) {
-        String phone    = body.get("phone");
+        String phone = body.get("phone");
         String password = body.get("password");
 
         if (isBlank(phone) || isBlank(password))
@@ -73,10 +73,10 @@ public class CustomerController {
 
         return ResponseEntity.ok(Map.of(
                 "message", "Login successful.",
-                "name",    customer.getName(),
-                "phone",   customer.getPhone(),
-                "email",   customer.getEmail(),
-                "id",      customer.getId()));
+                "name", customer.getName(),
+                "phone", customer.getPhone(),
+                "email", customer.getEmail(),
+                "id", customer.getId()));
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ public class CustomerController {
     // ─────────────────────────────────────────────────────────────────────
     @PostMapping("/update-password")
     public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> body) {
-        String phone    = body.get("phone");
+        String phone = body.get("phone");
         String password = body.get("password");
 
         if (isBlank(phone) || isBlank(password))
@@ -126,7 +126,7 @@ public class CustomerController {
 
         String masked = maskEmail(customer.getEmail());
         return ResponseEntity.ok(Map.of(
-                "message",     "OTP sent to " + masked,
+                "message", "OTP sent to " + masked,
                 "maskedEmail", masked));
     }
 
@@ -136,7 +136,7 @@ public class CustomerController {
     @PostMapping("/verify-login-otp")
     public ResponseEntity<?> verifyLoginOtp(@RequestBody Map<String, String> body) {
         String phone = body.get("phone");
-        String otp   = body.get("otp");
+        String otp = body.get("otp");
 
         if (isBlank(phone) || isBlank(otp))
             return ResponseEntity.badRequest().body("Phone and OTP are required.");
@@ -155,10 +155,10 @@ public class CustomerController {
 
         return ResponseEntity.ok(Map.of(
                 "message", "Login successful.",
-                "name",    customer.getName(),
-                "phone",   customer.getPhone(),
-                "email",   customer.getEmail(),
-                "id",      customer.getId()));
+                "name", customer.getName(),
+                "phone", customer.getPhone(),
+                "email", customer.getEmail(),
+                "id", customer.getId()));
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -192,7 +192,8 @@ public class CustomerController {
 
     private String maskEmail(String email) {
         int at = email.indexOf('@');
-        if (at <= 1) return email;
+        if (at <= 1)
+            return email;
         return email.charAt(0) + "***" + email.substring(at);
     }
 }
