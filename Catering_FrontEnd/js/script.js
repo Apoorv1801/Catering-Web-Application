@@ -171,7 +171,7 @@ async function loadMenuCards() {
             let categoryClass = item.category.toLowerCase().replace(/\s+/g, '-');
             container.innerHTML += `
             <div class="food-card ${categoryClass}" data-category="${item.category}">
-                <img src="${API_BASE_URL}/${item.image}" onerror="this.src='images/default-food.jpg'">
+                <img src="images/${item.image}" onerror="this.src='images/default-food.jpg'">
                 <h3>${item.name}</h3>
                 <p>₹${item.price}</p>
                 <p style="font-size:13px;color:#666;">${item.description || ""}</p>
