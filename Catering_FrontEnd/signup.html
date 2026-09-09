@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    <script src="js/config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | Royal Caterers</title>
@@ -16,10 +15,13 @@
 
     <header class="navbar">
         <div class="logo">Royal Caterers</div>
-        <nav>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <nav id="mainNav">
             <a href="index.html">Home</a>
-            <div class="nav-dropdown">
-                <a href="menu.html?event=Special Occasion" class="nav-dropdown-trigger">Menu &#9662;</a>
+            <div class="nav-dropdown" id="menuDropdown">
+                <a class="nav-dropdown-trigger">Menu &#9662;</a>
                 <div class="nav-dropdown-menu">
                     <a href="menu.html?event=Special Occasion">Special Occasion (All)</a>
                     <a href="menu.html?event=Wedding">Wedding</a>
@@ -41,7 +43,7 @@
             <h2 class="auth-title">Create Account</h2>
             <p class="auth-subtitle">Join us and start booking your events</p>
 
-            <!-- STEP 1: Registration details -->
+            <!-- STEP 1: Registration form -->
             <form class="auth-form" id="signupForm" onsubmit="return false">
                 <div class="auth-field">
                     <label>Full Name</label>
@@ -49,146 +51,147 @@
                 </div>
                 <div class="auth-field">
                     <label>Phone Number</label>
-                    <input type="tel" id="signupPhone" placeholder="Enter 10-digit phone number" maxlength="10"
-                        required>
+                    <input type="tel" id="signupPhone" placeholder="10-digit phone number" maxlength="10" required>
                 </div>
                 <div class="auth-field">
                     <label>Email Address</label>
                     <input type="email" id="signupEmail" placeholder="Enter your email address" required>
                 </div>
-                <button type="button" id="registerBtn" class="auth-btn">Register &amp; Send OTP</button>
+                <div class="auth-field">
+                    <label>Create Password</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="signupPassword" placeholder="At least 6 characters" required>
+                        <button type="button" class="pw-eye" onclick="togglePw('signupPassword', this)">👁</button>
+                    </div>
+                    <p class="auth-hint">You'll use this to log in — no OTP needed every time.</p>
+                </div>
+                <div class="auth-field">
+                    <label>Confirm Password</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="signupConfirm" placeholder="Re-enter password" required>
+                        <button type="button" class="pw-eye" onclick="togglePw('signupConfirm', this)">👁</button>
+                    </div>
+                </div>
+                <button type="button" id="registerBtn" class="auth-btn">Create Account</button>
                 <p id="signupMessage" style="font-size:13px; margin-top:8px;"></p>
             </form>
-
-            <!-- STEP 2: OTP verification (hidden initially) -->
-            <div id="otpSection" style="display:none;">
-                <p class="auth-hint" id="otpHintText" style="margin-bottom:14px; font-size:13px; color:#555;"></p>
-                <div class="auth-field">
-                    <label>Enter OTP</label>
-                    <input type="text" id="signupOtpInput" placeholder="Enter 6-digit OTP" maxlength="6">
-                </div>
-                <button type="button" id="verifySignupOtpBtn" class="auth-btn">Verify OTP &amp; Complete Signup</button>
-                <button type="button" id="resendSignupOtpBtn"
-                    style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:13px;margin-top:8px;display:block;">
-                    Resend OTP
-                </button>
-                <p id="otpMessage" style="font-size:13px; margin-top:8px;"></p>
-            </div>
 
             <p class="auth-switch">Already have an account? <a href="login.html">Login</a></p>
         </div>
     </div>
 
-    <script>
-        const API = `${API_BASE_URL}/customer`;
+    <style>
+        .pw-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
 
-        // ── REGISTER & SEND OTP ───────────────────────────────────────────
+        .pw-wrap input {
+            flex: 1;
+            padding-right: 42px;
+        }
+
+        .pw-eye {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            color: #aaa;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .pw-eye:hover {
+            background: none;
+            transform: none;
+            color: #ff7e5f;
+        }
+    </style>
+
+    <script>
+        const API = "http://localhost:8080/customer";
+
+        function togglePw(id, btn) {
+            const inp = document.getElementById(id);
+            if (inp.type === "password") {inp.type = "text"; btn.textContent = "🙈";}
+            else {inp.type = "password"; btn.textContent = "👁";}
+        }
+
         document.getElementById("registerBtn").addEventListener("click", async function () {
             const name = document.getElementById("signupName").value.trim();
             const phone = document.getElementById("signupPhone").value.trim();
             const email = document.getElementById("signupEmail").value.trim();
+            const password = document.getElementById("signupPassword").value;
+            const confirm = document.getElementById("signupConfirm").value;
             const msg = document.getElementById("signupMessage");
             msg.style.color = "red";
             msg.textContent = "";
 
-            if (!name) { msg.textContent = "Please enter your full name."; return; }
-            if (phone.length !== 10 || isNaN(phone)) { msg.textContent = "Enter a valid 10-digit phone number."; return; }
-            if (!email.includes("@")) { msg.textContent = "Enter a valid email address."; return; }
+            if (!name) {msg.textContent = "Please enter your full name."; return;}
+            if (!/^[0-9]{10}$/.test(phone)) {msg.textContent = "Enter a valid 10-digit phone number."; return;}
+            if (!email.includes("@")) {msg.textContent = "Enter a valid email address."; return;}
+            if (password.length < 6) {msg.textContent = "Password must be at least 6 characters."; return;}
+            if (password !== confirm) {msg.textContent = "Passwords do not match."; return;}
 
             this.disabled = true;
-            this.textContent = "Sending...";
+            this.textContent = "Creating account...";
 
             try {
                 const res = await fetch(API + "/register", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, phone, email })
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({name, phone, email, password})
                 });
                 const text = await res.text();
 
                 if (res.ok) {
-                    document.getElementById("signupForm").style.display = "none";
-                    document.getElementById("otpSection").style.display = "block";
-                    document.getElementById("otpHintText").textContent =
-                        "OTP sent to " + email + ". Enter it below to verify your account.";
+                    // Auto-login: call password-login endpoint and store session
+                    const loginRes = await fetch(API + "/login-password", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({phone, password})
+                    });
+                    if (loginRes.ok) {
+                        const data = await loginRes.json();
+                        sessionStorage.setItem("loggedInCustomer", JSON.stringify(data));
+                        alert("Welcome, " + data.name + "! Account created successfully.");
+                        window.location.href = "index.html";
+                    } else {
+                        msg.style.color = "green";
+                        msg.textContent = "Account created! Please login.";
+                        setTimeout(() => window.location.href = "login.html", 1500);
+                    }
                 } else {
                     msg.textContent = text;
                     this.disabled = false;
-                    this.textContent = "Register & Send OTP";
+                    this.textContent = "Create Account";
                 }
             } catch (err) {
                 msg.textContent = "Cannot reach server. Make sure backend is running.";
                 this.disabled = false;
-                this.textContent = "Register & Send OTP";
+                this.textContent = "Create Account";
             }
-        });
-
-        // ── VERIFY OTP ────────────────────────────────────────────────────
-        document.getElementById("verifySignupOtpBtn").addEventListener("click", async function () {
-            const email = document.getElementById("signupEmail").value.trim();
-            const otp = document.getElementById("signupOtpInput").value.trim();
-            const msg = document.getElementById("otpMessage");
-            msg.style.color = "red";
-            msg.textContent = "";
-
-            if (otp.length !== 6) { msg.textContent = "Enter the 6-digit OTP."; return; }
-
-            this.disabled = true;
-            this.textContent = "Verifying...";
-
-            try {
-                const res = await fetch(API + "/verify-signup-otp", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, otp })
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    sessionStorage.setItem("loggedInCustomer", JSON.stringify(data));
-                    alert("Welcome, " + data.name + "! Your account is verified.");
-                    window.location.href = "index.html";
-                } else {
-                    const text = await res.text();
-                    msg.textContent = text;
-                    this.disabled = false;
-                    this.textContent = "Verify OTP & Complete Signup";
-                }
-            } catch (err) {
-                msg.textContent = "Cannot reach server. Make sure backend is running.";
-                this.disabled = false;
-                this.textContent = "Verify OTP & Complete Signup";
-            }
-        });
-
-        // ── RESEND OTP ────────────────────────────────────────────────────
-        document.getElementById("resendSignupOtpBtn").addEventListener("click", async function () {
-            const phone = document.getElementById("signupPhone").value.trim();
-            const msg = document.getElementById("otpMessage");
-            this.disabled = true;
-            this.textContent = "Resending...";
-
-            try {
-                const res = await fetch(API + "/resend-otp", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ phone })
-                });
-                const text = await res.text();
-                msg.style.color = res.ok ? "green" : "red";
-                msg.textContent = text;
-            } catch (err) {
-                msg.style.color = "red";
-                msg.textContent = "Cannot reach server.";
-            }
-
-            setTimeout(() => {
-                this.disabled = false;
-                this.textContent = "Resend OTP";
-            }, 30000); // allow resend after 30s
         });
     </script>
 
+    <script>
+        // Hamburger menu
+        const toggle = document.getElementById("navToggle");
+        const nav = document.getElementById("mainNav");
+        toggle.addEventListener("click", () => nav.classList.toggle("open"));
+
+        // Mobile dropdown tap
+        document.getElementById("menuDropdown").addEventListener("click", function (e) {
+            if (window.innerWidth <= 768) {
+                e.stopPropagation();
+                this.classList.toggle("open");
+            }
+        });
+    </script>
     <script src="js/script.js"></script>
 </body>
 

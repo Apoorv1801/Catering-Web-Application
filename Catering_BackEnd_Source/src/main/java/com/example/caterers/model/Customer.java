@@ -19,13 +19,18 @@ public class Customer {
     @Column(nullable = false, unique = true)
     private String email;
 
-    // Firebase UID stored after first login (for reference)
+    // Plain-text stored for demo purposes.
+    // In production: use BCryptPasswordEncoder from Spring Security.
+    @Column
+    private String password;
+
     @Column
     private String firebaseUid;
 
     @Column(nullable = false)
     private boolean verified = false;
 
+    // ── Getters & Setters ──────────────────────────────────────────
     public Long getId() {
         return id;
     }
@@ -54,12 +59,20 @@ public class Customer {
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getFirebaseUid() {
         return firebaseUid;
     }
 
-    public void setFirebaseUid(String firebaseUid) {
-        this.firebaseUid = firebaseUid;
+    public void setFirebaseUid(String uid) {
+        this.firebaseUid = uid;
     }
 
     public boolean isVerified() {
