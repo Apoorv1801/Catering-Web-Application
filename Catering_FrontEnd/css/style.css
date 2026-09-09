@@ -1418,7 +1418,6 @@ section {
     border-radius: 20px;
     background: white;
     transition: 0.2s;
-    user-select: none;
 }
 
 .event-checkboxes label:hover {
