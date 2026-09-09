@@ -1,0 +1,7 @@
+Production - Offline
+
+REQUIREMENT -
+
+1. Zomato - Online Order - Zayka Thali
+2. Event Booking - Food through Menu or Customised
+3. Company Tendor Catering - Request Tendor + Sample 
