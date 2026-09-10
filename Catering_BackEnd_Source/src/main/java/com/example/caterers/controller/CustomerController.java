@@ -22,8 +22,7 @@ public class CustomerController {
     private OTPService otpService;
 
     // ─────────────────────────────────────────────────────────────────────
-    // 1. REGISTER — saves name, phone, email, password; marks verified=true
-    // No OTP needed on signup. Account is ready immediately.
+    // 1. REGISTER — saves name, phone, email; sends OTP to email
     // ─────────────────────────────────────────────────────────────────────
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Customer customer) {
@@ -33,8 +32,6 @@ public class CustomerController {
             return ResponseEntity.badRequest().body("Valid 10-digit phone number is required.");
         if (isBlank(customer.getEmail()) || !customer.getEmail().contains("@"))
             return ResponseEntity.badRequest().body("Valid email address is required.");
-        if (isBlank(customer.getPassword()) || customer.getPassword().length() < 6)
-            return ResponseEntity.badRequest().body("Password must be at least 6 characters.");
 
         if (customerRepository.findByPhone(customer.getPhone()).isPresent())
             return ResponseEntity.badRequest().body("Phone number already registered. Please login.");
@@ -42,37 +39,43 @@ public class CustomerController {
             return ResponseEntity.badRequest().body("Email already registered. Please login.");
 
         customer.setEmail(customer.getEmail().toLowerCase());
-        customer.setVerified(true); // No OTP required — password is enough
+        customer.setVerified(false);
         customerRepository.save(customer);
 
-        return ResponseEntity.ok("Account created successfully.");
+        try {
+            otpService.generateAndSend(customer.getEmail(), customer.getName());
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body("Registered but failed to send OTP email: " + e.getMessage());
+        }
+
+        return ResponseEntity.ok("OTP sent to " + customer.getEmail() + ". Please verify to complete signup.");
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    // 2. LOGIN WITH PASSWORD — primary login method for hirers / demo
+    // 2. VERIFY OTP after signup (marks account as verified)
     // ─────────────────────────────────────────────────────────────────────
-    @PostMapping("/login-password")
-    public ResponseEntity<?> loginWithPassword(@RequestBody Map<String, String> body) {
-        String phone = body.get("phone");
-        String password = body.get("password");
+    @PostMapping("/verify-signup-otp")
+    public ResponseEntity<?> verifySignupOtp(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String otp = body.get("otp");
 
-        if (isBlank(phone) || isBlank(password))
-            return ResponseEntity.badRequest().body("Phone and password are required.");
+        if (isBlank(email) || isBlank(otp))
+            return ResponseEntity.badRequest().body("Email and OTP are required.");
 
-        Optional<Customer> opt = customerRepository.findByPhone(phone);
+        Optional<Customer> opt = customerRepository.findByEmail(email.toLowerCase());
         if (opt.isEmpty())
-            return ResponseEntity.badRequest().body("Phone number not registered. Please sign up first.");
+            return ResponseEntity.badRequest().body("Email not registered.");
+
+        if (!otpService.verify(email.toLowerCase(), otp))
+            return ResponseEntity.badRequest().body("Invalid or expired OTP.");
 
         Customer customer = opt.get();
-
-        if (isBlank(customer.getPassword()))
-            return ResponseEntity.badRequest().body("No password set. Use OTP login instead.");
-
-        if (!customer.getPassword().equals(password))
-            return ResponseEntity.badRequest().body("Incorrect password.");
+        customer.setVerified(true);
+        customerRepository.save(customer);
 
         return ResponseEntity.ok(Map.of(
-                "message", "Login successful.",
+                "message", "Account verified successfully.",
                 "name", customer.getName(),
                 "phone", customer.getPhone(),
                 "email", customer.getEmail(),
@@ -80,31 +83,7 @@ public class CustomerController {
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    // 3. UPDATE PASSWORD — called after OTP login to set a new password
-    // ─────────────────────────────────────────────────────────────────────
-    @PostMapping("/update-password")
-    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> body) {
-        String phone = body.get("phone");
-        String password = body.get("password");
-
-        if (isBlank(phone) || isBlank(password))
-            return ResponseEntity.badRequest().body("Phone and password are required.");
-        if (password.length() < 6)
-            return ResponseEntity.badRequest().body("Password must be at least 6 characters.");
-
-        Optional<Customer> opt = customerRepository.findByPhone(phone);
-        if (opt.isEmpty())
-            return ResponseEntity.badRequest().body("Phone not registered.");
-
-        Customer customer = opt.get();
-        customer.setPassword(password);
-        customerRepository.save(customer);
-
-        return ResponseEntity.ok("Password updated successfully.");
-    }
-
-    // ─────────────────────────────────────────────────────────────────────
-    // 4. SEND LOGIN OTP — for "forgot password" / OTP fallback
+    // 3. SEND LOGIN OTP — user provides phone; we look up email and send OTP
     // ─────────────────────────────────────────────────────────────────────
     @PostMapping("/send-login-otp")
     public ResponseEntity<?> sendLoginOtp(@RequestBody Map<String, String> body) {
@@ -118,12 +97,14 @@ public class CustomerController {
             return ResponseEntity.badRequest().body("Phone number not registered. Please sign up first.");
 
         Customer customer = opt.get();
+
         try {
             otpService.generateAndSend(customer.getEmail(), customer.getName());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to send OTP: " + e.getMessage());
         }
 
+        // Return masked email so frontend can show "OTP sent to r***@gmail.com"
         String masked = maskEmail(customer.getEmail());
         return ResponseEntity.ok(Map.of(
                 "message", "OTP sent to " + masked,
@@ -131,7 +112,7 @@ public class CustomerController {
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    // 5. VERIFY LOGIN OTP — verify OTP and log in (forgot-password flow)
+    // 4. VERIFY LOGIN OTP — verifies OTP and returns session data
     // ─────────────────────────────────────────────────────────────────────
     @PostMapping("/verify-login-otp")
     public ResponseEntity<?> verifyLoginOtp(@RequestBody Map<String, String> body) {
@@ -162,11 +143,12 @@ public class CustomerController {
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    // 6. RESEND OTP
+    // 5. RESEND OTP — works for both signup and login flows
     // ─────────────────────────────────────────────────────────────────────
     @PostMapping("/resend-otp")
     public ResponseEntity<?> resendOtp(@RequestBody Map<String, String> body) {
         String phone = body.get("phone");
+
         if (isBlank(phone))
             return ResponseEntity.badRequest().body("Phone is required.");
 
@@ -180,6 +162,7 @@ public class CustomerController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to resend OTP: " + e.getMessage());
         }
+
         return ResponseEntity.ok("OTP resent to " + maskEmail(customer.getEmail()));
     }
 

@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <script src="js/config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart | Royal Caterers</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .field-error { color:#e74c3c; font-size:12px; margin-top:3px; display:block; }
+        .booking-form .hint { font-size:12px; color:#888; margin-top:3px; }
+    </style>
 </head>
-
 <body>
-
     <header>
         <h1>Royal Caterers</h1>
         <nav>
@@ -18,40 +19,40 @@
             <a href="menu.html">Menu</a>
             <a href="booking.html">Book Event</a>
             <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+            <span id="nav-user"></span>
         </nav>
     </header>
 
     <section class="cart">
-
         <h2>Your Cart</h2>
         <div id="cart-items"></div>
         <h3 class="total-box">Total: ₹<span id="total-price">0</span></h3>
 
-        <form id="orderForm" class="booking-form" onsubmit="return false">
+        <form id="orderForm" class="booking-form" onsubmit="return false" novalidate>
             <h3>Delivery Details</h3>
 
-            <label>Full Name</label>
-            <input type="text" id="orderName" placeholder="Enter your name" required>
+            <label>Full Name *</label>
+            <input type="text" id="orderName" placeholder="Enter your full name" maxlength="60" autocomplete="name">
+            <p class="hint">Letters only, 2–60 characters.</p>
 
-            <label>Phone</label>
-            <input type="tel" id="orderPhone" placeholder="Enter your phone number" required>
+            <label>Phone Number *</label>
+            <input type="tel" id="orderPhone" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel">
+            <p class="hint">Must start with 6, 7, 8, or 9.</p>
 
-            <label>Delivery Address</label>
-            <textarea id="orderAddress" placeholder="Enter your delivery address" required></textarea>
+            <label>Delivery Address *</label>
+            <textarea id="orderAddress" placeholder="House/Flat no., Street, Area, City, PIN" rows="3" maxlength="300"></textarea>
+            <p class="hint">At least 10 characters, max 300.</p>
 
             <button type="submit" id="placeOrderBtn">Place Order</button>
         </form>
-
     </section>
 
     <script>
         if (!sessionStorage.getItem("loggedInCustomer")) {
-            alert("Please login to book an event.");
-            window.location.href = "login.html";
+            alert("Please login to place an order.");
+            window.location.href = "login.html?returnUrl=" + encodeURIComponent(window.location.href);
         }
     </script>
     <script src="js/script.js"></script>
-
 </body>
-
 </html>

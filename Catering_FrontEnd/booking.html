@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <script src="js/config.js"></script>
     <meta charset="UTF-8">
@@ -8,10 +7,14 @@
     <title>Book Event | Royal Caterers</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .field-error { color:#e74c3c; font-size:12px; margin-top:3px; display:block; }
+        .booking-form input:invalid, .booking-form select:invalid, .booking-form textarea:invalid { border-color: #e74c3c; }
+        .booking-form .hint { font-size:12px; color:#888; margin-top:3px; }
+        .char-count { font-size:11px; color:#aaa; text-align:right; }
+    </style>
 </head>
-
 <body>
-
     <header>
         <h1>Royal Caterers</h1>
         <nav>
@@ -19,51 +22,62 @@
             <a href="menu.html">Menu</a>
             <a href="booking.html">Book Event</a>
             <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+            <span id="nav-user"></span>
         </nav>
     </header>
 
     <section class="booking">
         <h2>Book Catering For Your Event</h2>
+        <form class="booking-form" id="bookingForm" onsubmit="return false" novalidate>
 
-        <!-- ✅ onsubmit="return false" prevents default HTML form submission -->
-        <form class="booking-form" id="bookingForm" onsubmit="return false">
+            <label>Full Name *</label>
+            <input type="text" id="name" placeholder="Enter your full name" maxlength="60" autocomplete="name">
+            <p class="hint">Letters only, 2–60 characters.</p>
 
-            <label>Full Name</label>
-            <input type="text" id="name" placeholder="Enter your name" required>
+            <label>Email Address *</label>
+            <input type="email" id="email" placeholder="Enter your email" maxlength="100" autocomplete="email">
 
-            <label>Email</label>
-            <input type="email" id="email" placeholder="Enter your email" required>
+            <label>Phone Number *</label>
+            <input type="tel" id="phone" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel">
+            <p class="hint">Must start with 6, 7, 8, or 9.</p>
 
-            <label>Phone</label>
-            <input type="tel" id="phone" placeholder="Enter your phone number" required>
-
-            <label>Event Type</label>
+            <label>Event Type *</label>
             <select id="eventType">
+                <option value="">— Select Event Type —</option>
                 <option>Wedding</option>
+                <option>Anniversary</option>
                 <option>Birthday</option>
+                <option>Retirement</option>
+                <option>Engagement</option>
                 <option>Corporate</option>
             </select>
 
-            <label>Event Date</label>
-            <input type="date" id="eventDate" required>
+            <label>Event Date *</label>
+            <input type="date" id="eventDate">
+            <p class="hint">Minimum 3 days in advance, maximum 1 month ahead.</p>
 
-            <label>Number of Guests</label>
-            <input type="number" id="guests" placeholder="Enter guest count">
+            <label>Number of Guests *</label>
+            <input type="number" id="guests" placeholder="Minimum 10 guests" min="10" max="1499">
+            <p class="hint">We cater for 10 to 1499 guests.</p>
+
+            <label>Special Requests <span style="color:#aaa;font-weight:400;">(optional)</span></label>
+            <textarea id="specialRequests" placeholder="Dietary needs, preferences, or any special arrangements..." rows="3" maxlength="500"></textarea>
+            <p class="char-count"><span id="srCount">0</span>/500</p>
 
             <button type="submit">Submit Booking</button>
-
         </form>
     </section>
 
-    <!-- ✅ Script at the bottom so the form exists in DOM before JS runs -->
     <script>
         if (!sessionStorage.getItem("loggedInCustomer")) {
             alert("Please login to book an event.");
-            window.location.href = "login.html";
+            window.location.href = "login.html?returnUrl=" + encodeURIComponent(window.location.href);
         }
+        // char counter for special requests
+        const sr = document.getElementById("specialRequests");
+        const sc = document.getElementById("srCount");
+        if (sr) sr.addEventListener("input", () => { sc.textContent = sr.value.length; });
     </script>
     <script src="js/script.js"></script>
-
 </body>
-
 </html>
